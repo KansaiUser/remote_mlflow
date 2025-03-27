@@ -3,7 +3,11 @@ Containerized setup of remote mlflow
 
 ## MinIO setup
 
-Run it as
+Make sure that the necessary data folder exist
+```bash
+$mkdir -p ${HOME}/minio/data
+```
+and then run it as
 
 ```bash
 $docker compose up -d
