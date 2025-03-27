@@ -1,4 +1,42 @@
 services:
+  mysql_mlflow:
+    image: mysql:latest
+    container_name: mysql_mlflow
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+    ports:
+      - "3306:3306"
+    volumes:
+      - ${MYSQL_DATA_PATH}:/var/lib/mysql
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+    networks:
+      - mlflow_network
+
+  waitfordb:
+    image: busybox
+    depends_on:
+      - mysql_mlflow
+    command: sh -c "until nc -z mysql_mlflow 3306; do echo waiting for database; sleep 2; done;"
+    networks:
+      - mlflow_network
+
+  # Adminer (MySQL GUI)
+  adminer:
+    image: adminer
+    container_name: adminer_mysql
+    restart: always
+    ports:
+      - "8080:8080"
+    depends_on:
+      - mysql_mlflow
+    networks:
+      - mlflow_network
+
+
   minio:
     image: quay.io/minio/minio
     container_name: minio1
