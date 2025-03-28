@@ -1,6 +1,6 @@
 # remote_mlflow
 Containerized setup of remote mlflow.
-Medium article [here](http://medium)
+Medium article here: [Remote MLFlow setup with Docker](https://medium.com/@hitorunajp/remote-mlflow-setup-with-docker-de54652241a4)
 
 ## MinIO setup
 
