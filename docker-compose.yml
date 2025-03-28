@@ -1,4 +1,26 @@
 services:
+  mlflow:
+    build:
+      context: mlflow_server
+      dockerfile: Dockerfile
+    image: mlflow
+    environment:
+      AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID}
+      AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY}
+      MLFLOW_S3_ENDPOINT_URL: http://minio:9000
+    command: mlflow server --backend-store-uri 'mysql+pymysql://mlflow_user:${MYSQL_PASSWORD}@mysql_mlflow/mlflow_db' --default-artifact-root 's3://flow-bucket/' --host 0.0.0.0 --port 5000
+    depends_on:
+      - mysql_mlflow
+      - minio
+      - waitfordb
+    ports:
+      - "5000:5000"
+    volumes:
+      - ${HOME}/mlruns:/mlflow
+    networks:
+      - mlflow_network
+    restart: always
+
   mysql_mlflow:
     image: mysql:latest
     container_name: mysql_mlflow
